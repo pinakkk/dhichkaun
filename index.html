@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -10,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
 
   <style>
-    /* Lyrics styling */
     .lyrics-container {
       position: relative;
       text-align: center;
@@ -24,6 +24,7 @@
       height: auto;
       overflow: visible;
     }
+
     .lyric-line {
       display: flex;
       flex-wrap: wrap;
@@ -35,6 +36,7 @@
       transform: translate(-50%, -50%);
       opacity: 0;
     }
+
     .word {
       opacity: 0;
       font-size: 3rem;
@@ -43,11 +45,11 @@
       color: #fff;
       display: inline-block;
     }
+
     audio {
       display: none;
     }
 
-    /* Glassmorphism music control */
     #musicControl {
       position: fixed;
       top: 2rem;
@@ -67,36 +69,26 @@
       z-index: 1001;
       transition: transform 0.2s ease;
     }
+
     #musicControl:hover {
       transform: scale(1.1);
     }
+
     #musicControl svg {
       width: 1.5rem;
       height: 1.5rem;
       color: #fff;
     }
+
     #musicControl.paused svg {
       transform: rotate(90deg);
     }
 
-    /* ✅ Watermark Styling */
-    .watermark {
-      position: fixed;
-      bottom: 10px;
-      right: 15px;
-      font-size: 0.9rem;
-      font-family: 'Poppins', sans-serif;
-      color: rgba(255, 255, 255, 0.6);
-      z-index: 2000;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* Mobile tweaks */
     @media (max-width: 600px) {
       .lyrics-container {
         padding-top: 60px;
       }
+
       .lyric-line {
         top: 40%;
       }
@@ -105,17 +97,14 @@
 </head>
 
 <body>
-  <!-- Autoplay background music -->
   <audio id="birthdaySong" autoplay loop>
     <source src="music.mp3" type="audio/mp3" />
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Glassmorphism Music Control -->
   <div id="musicControl" class="playing">
-    <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" 
-         viewBox="0 0 24 24" fill="none" stroke="currentColor" 
-         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <svg id="musicIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M9 18V5l12-2v13"></path>
       <circle cx="6" cy="18" r="3"></circle>
       <circle cx="18" cy="16" r="3"></circle>
@@ -123,17 +112,11 @@
   </div>
 
   <div class="container">
-    <!-- Your heart animations (from scripts.js) -->
     <div class="heart"></div>
     <div class="lyrics-container" id="lyrics"></div>
   </div>
 
-  <!-- ✅ Watermark -->
-  <div class="watermark">Made By Pinak</div>
-
-  <!-- Anime.js for lyric animations -->
   <script src="anime.min.js"></script>
-  <!-- Original heart animation script -->
   <script src="scripts.js"></script>
 
   <script>
@@ -141,82 +124,176 @@
       const audio = document.getElementById("birthdaySong");
       const control = document.getElementById("musicControl");
       const lyricsContainer = document.getElementById("lyrics");
-
-      // your existing volume/play setup…
       audio.volume = 0.5;
-      audio.play().catch(() => {});
-
+      audio.play().catch(() => { });
       control.addEventListener("click", () => {
         if (audio.paused) audio.play();
         else audio.pause();
       });
-      audio.addEventListener("play",  () => control.classList.remove("paused"));
+      audio.addEventListener("play", () => control.classList.remove("paused"));
       audio.addEventListener("pause", () => control.classList.add("paused"));
-
-      // —— NEW LYRIC SYNC LOGIC —— 
       const lyrics = [
-        { time:    0, text: "AARE JAB TU, BHADAKTI HAIN" },
+        { time: 0, text: "AARE JAB TU, BHADAKTI HAIN" },
         { time: 2200, text: "DIL PE CHALE" },
         { time: 3800, text: "GOLIYAAN..., ... ... ... ... ..." },
         { time: 5700, text: "HAAYE..." },
       ];
-
       let shown = new Set();
       let lastTime = 0;
-
       audio.addEventListener("timeupdate", () => {
         const t = audio.currentTime * 1000;
-
         if (t < lastTime) {
           shown.clear();
           lyricsContainer.innerHTML = "";
         }
-
         lyrics.forEach((lyric, idx) => {
           if (t >= lyric.time && !shown.has(idx)) {
             shown.add(idx);
             showLine(lyric.text);
           }
         });
-
         lastTime = t;
       });
-
       function showLine(text) {
         lyricsContainer.innerHTML = "";
         const line = document.createElement("div");
         line.className = "lyric-line";
         lyricsContainer.appendChild(line);
-
         let delayAcc = 0;
         text.split(" ").forEach(word => {
           const w = document.createElement("div")
           w.className = "word";
           w.textContent = word;
           line.appendChild(w);
-
           setTimeout(() => {
             anime({
               targets: w,
-              opacity:   [0, 1],
-              translateY:[30, 0],
-              duration:  900,
-              delay:     anime.stagger(100),
-              easing:    "easeOutBack"
+              opacity: [0, 1],
+              translateY: [30, 0],
+              duration: 900,
+              delay: anime.stagger(100),
+              easing: "easeOutBack"
             });
           }, delayAcc);
-
           delayAcc += 250;
         });
-
         anime({
-          targets:  line,
-          opacity:  [0, 1],
+          targets: line,
+          opacity: [0, 1],
           duration: 600,
-          easing:   "easeInOutSine"
+          easing: "easeInOutSine"
         });
       }
     });
+
+    (function () {
+      'use strict';
+      const ENCODED = 'TWFkZSBCeSBQaW5haw==';
+      const ID = 'wm_' + (function randomId() {
+        return Math.random().toString(36).slice(2, 9);
+      })();
+      function signatureOf(s) {
+        let sum = 0;
+        for (let i = 0; i < s.length; i++) sum = (sum * 31 + s.charCodeAt(i)) >>> 0;
+        return (sum ^ 0x9e3779b9).toString(36);
+      }
+      function decodeBase64(b64) {
+        try {
+          return decodeURIComponent(Array.prototype.map.call(atob(b64), function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          }).join(''));
+        } catch (e) {
+          return atob(b64);
+        }
+      }
+      const TEXT = decodeBase64(ENCODED);
+      const SIGN = signatureOf(TEXT);
+      const styleRules = `
+    #${ID} {
+      position: fixed;
+      bottom: 10px;
+      right: 15px;
+      font-size: 0.9rem;
+      font-family: 'Poppins', sans-serif;
+      color: rgba(255, 255, 255, 0.6);
+      z-index: 99999;
+      user-select: none;
+      pointer-events: none;
+      -webkit-user-select: none;
+      mix-blend-mode: screen;
+      transition: opacity .25s ease;
+      opacity: 0.95;
+      padding: 6px 8px;
+      border-radius: 6px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+    @media (max-width: 600px) {
+      #${ID} { bottom: 6px; right: 8px; font-size: 0.8rem; }
+    }
+  `;
+      (function injectStyles(rules) {
+        try {
+          const s = document.createElement('style');
+          s.setAttribute('data-wm-style', '1');
+          s.appendChild(document.createTextNode(rules));
+          document.head.appendChild(s);
+        } catch (e) { }
+      })(styleRules);
+      function createWatermark() {
+        const el = document.createElement('div');
+        el.id = ID;
+        el.setAttribute('data-wm-sign', SIGN);
+        el.setAttribute('aria-hidden', 'true');
+        el.style.opacity = '0';
+        const t = document.createTextNode(TEXT);
+        el.appendChild(t);
+        el.tabIndex = -1;
+        el.setAttribute('role', 'presentation');
+        el.style.pointerEvents = 'none';
+        el.style.userSelect = 'none';
+        setTimeout(() => { if (el) el.style.opacity = '0.95'; }, 50);
+        return el;
+      }
+      function ensureWatermark() {
+        try {
+          const existing = document.getElementById(ID);
+          if (!existing) {
+            const node = createWatermark();
+            document.body.appendChild(node);
+            return;
+          }
+          const text = (existing.textContent || '').trim();
+          const sig = existing.getAttribute('data-wm-sign') || '';
+          if (text !== TEXT || sig !== SIGN) {
+            existing.parentNode && existing.parentNode.removeChild(existing);
+            const node = createWatermark();
+            document.body.appendChild(node);
+          }
+        } catch (e) { }
+      }
+      ensureWatermark();
+      const observer = new MutationObserver(function (mutations) {
+        for (let m of mutations) {
+          if (m.type === 'childList' || m.type === 'attributes') {
+            ensureWatermark();
+            break;
+          }
+        }
+      });
+      try {
+        observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+      } catch (e) {
+        setTimeout(() => {
+          try { observer.observe(document.body, { childList: true, subtree: true, attributes: true }); } catch (err) { }
+        }, 300);
+      }
+      const CHECK_INTERVAL = 2500;
+      const checkTimer = setInterval(ensureWatermark, CHECK_INTERVAL);
+      window.addEventListener('unload', function () {
+        try { observer.disconnect(); clearInterval(checkTimer); } catch (e) { }
+      });
+    })();
   </script>
 </body>
 </html>
